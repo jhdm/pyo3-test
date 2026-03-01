@@ -18,7 +18,7 @@ maturin = ">=1.12,<2.0"
 develop = "maturin develop"
 build = "maturin build --release"
 build-manylinux = "maturin build --release --manylinux 2_34"
-smoke-test = "python -c \"import pyo3_test; print(pyo3_test.hello('world'))\""
+hello = "python -c \"import pyo3_test; print(pyo3_test.hello('world'))\""
 
 [feature.py312.dependencies]
 python = "3.12.*"
