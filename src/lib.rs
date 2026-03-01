@@ -1,19 +1,12 @@
 use pyo3::prelude::*;
 
-/// A Python module implemented in Rust
+#[pyfunction]
+fn hello(name: String) -> String {
+    format!("Hello, {}!", name)
+}
+
 #[pymodule]
-mod pyo3_test {
-    use pyo3::prelude::*;
-    use uuid::Uuid;
-
-    #[pyfunction]
-    fn hello(name: String) -> String {
-        format!("Hello, {}!", name)
-    }
-
-    /// Example of calling externalRust library.
-    #[pyfunction]
-    fn generate_uuid() -> String {
-        Uuid::new_v4().to_string()
-    }
+fn pyo3_test(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(hello, m)?)?;
+    Ok(())
 }
