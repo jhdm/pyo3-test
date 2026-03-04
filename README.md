@@ -1,74 +1,102 @@
 # PyO3 Test
 
-## Development Commands
+## Quick Start
 
-### Quick Start Commands
+### Disable VSCode Auto Activate Virtual Environment
 
-```sh
-# Install dependencies
-pixi install
+You will activate/deactive virtual environments
+for builds, then should disable VSCode's auto
+activating of virtual environment as follows.
 
-# Build for Development
-pixi run develop
+**.vscode\settings.json:**
 
-# Try the Hello World example
-pixi run hello
+```json
+{
+  "python.terminal.activateEnvironment": false
+}
 ```
 
-The `hello` task makes Python `hello("world")` function call. It should print out `Hello, world!`.
-
-More details follow.
-
-### Install Dependencies
+**Create virtual environment for Python version:**
 
 ```sh
-pixi install
+uv venv .py313 --python 3.13
 ```
 
-With specific virtual environment:
+Activate it below.
+
+**Linux:**
 
 ```sh
-pixi install -e py314
+source .py313/bin/activate
 ```
 
-Substitute `py314` with the actual virtual environment.
-
-### Build for Development
+**Bash (Windows):**
 
 ```sh
-pixi run develop
+source .py313/Scripts/activate
 ```
 
-With specific virtual environment:
+**PowerShell (Windows):**
+
+```powershell
+.py313\Scripts\activate.ps1
+```
+
+**Install dependencies including dev group:**
 
 ```sh
-pixi run -e py314 develop
+# Sync dependencies
+uv sync --group  dev --active
 ```
 
-That builds and installs the package in the virtual environment.
+The `--group dev` option also includes development group dependencies. The `--active` option uses the current active virtual environment. That prevents a warning that happens if there is a managed `.venv` virtual environment.
+
+```
+warning: `VIRTUAL_ENV=.py313` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+```
+
+**Build for Development:**
+
+```sh
+just develop
+```
+
+That builds and installs the package in the virtual environment, but it does not create distributable .`whl` file under `target/wheels/` directory. With it, you can now import the package in Python.
+
+**Try the Hello World example:**
+
+```sh
+just hello
+```
+
+It should print out `Hello, world!`. The `hello` task  imports `pyo3_test` module and calls function: `hello("world")`.
+
+## Development Tasks
+
+More detailed development tasks follows.
 
 ### Build for Release Distribution
 
 ```sh
-pixi run build
+uv run build
 ```
 
-With specific virtual environment:
+It will create `.whl` file under `target/wheels/` directory.
 
-```sh
-pixi run -e py314 build
-```
+> Note: This does not install package in the virtual environment.
 
-This does not install package in the virtual environment.
-
-## Maturin --manylinux Option
+## Build with Specific glibc Version
 
 The `--manylinux` option of `maturin` lets you specify glibc version.
 
 **Example:**
 
 ```sh
-maturin build --release --manylinux 2_34
+just build-manylinux
 ```
 
-The `2_34` specifies `glibc` `2.34`.
+Without that option, it auto detects and use the glibc version in the virtual environment, by default.
+
+To build for Python 3.13:
+
+VIRTUAL_ENV=py313 uv run --active maturin build
